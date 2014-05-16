@@ -15,20 +15,6 @@ import random
 with open('./gallery.yml', 'r') as f:
   settings = yaml.load(f)
 
-VIDEO_FORMAT = (
-    '.mov',
-    '.api',
-    '.m4v',
-    '.mpeg',
-    )
-
-IMAGE_FORMAT = (
-    '.png',
-    '.jpg',
-    '.jpeg',
-    '.gif',
-    )
-
 if len(sys.argv) < 2:
     sys.exit("""
     Error: Incorrect number of arguments.
@@ -89,7 +75,7 @@ def show_pictures():
 
 def show_video():
     print " -- SHOWING VIDEO"
-    video_list = get_file_list(VIDEO_FORMAT,str(settings['dir_videos']))
+    video_list = get_file_list(tuple(settings['apps']['video']['formats']),str(settings['dir_videos']))
 
     selected_video = random.choice(video_list).strip().replace(" ", "\ ")
     selected_video = "%s%s" % (settings['dir_videos'], selected_video)
@@ -101,11 +87,14 @@ def show_video():
 
 
 #################
-command_string = str(sys.argv[1])
+#  Main
+#################
+if __name__ == "__main__":
+    command_string = str(sys.argv[1])
 
-if command_string == "start":
-	start_stream()
-elif command_string == "stop":
-	stop_stream()
-else:
-	print "Invalid Command"
+    if command_string == "start":
+    	start_stream()
+    elif command_string == "stop":
+    	stop_stream()
+    else:
+    	print "Invalid Command"

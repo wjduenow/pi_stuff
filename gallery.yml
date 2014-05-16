@@ -1,16 +1,26 @@
 dir_pictures: /Users/wesd/Downloads/img/*
-pictures_time: 2
 dir_videos: /Users/wesd/Downloads/
+
+pictures_time: 2
 
 apps:
   video:
     python_command: show_video
     command: omxplayer --no-osd VIDEO"
     process: omxplayer
+    formats: 
+      - .mov
+      - .api
+      - .m4v
+      - .mpeg
   pictures:
     python_command: show_pictures
     command: sudo fbi -noverbose -T 2 -a -m 1900x1200  -t 5 -u DIRECTORY > /dev/null 2>&1&
     process: fbi
-
+    formats: 
+      - .png
+      - .jpg
+      - .jpeg
+      - .gif
 
 
