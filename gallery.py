@@ -29,10 +29,6 @@ IMAGE_FORMAT = (
     '.gif',
     )
 
-APPS = {'video': "omxplayer --no-osd VIDEO", 
-        'pictures': "sudo fbi -noverbose -T 2 -a -m 1900x1200  -t 5 -u DIRECTORY > /dev/null 2>&1&"
-       }
-
 if len(sys.argv) < 2:
     sys.exit("""
     Error: Incorrect number of arguments.
@@ -43,17 +39,15 @@ def start_stream():
     print "Starting Media Stream"
     while True:
       clear_frame_buffer()
-      stop_process('ruby')
-      show_pictures()
+      run_app = pick_stream()
+      stop_process(run_app['process'])
+      exec("%s()" % (run_app['python_command']))
       print "done"
 
-    #print get_file_list(VIDEO_FORMAT,str(settings['dir_videos']))
-
-    #print get_file_list(IMAGE_FORMAT,str(settings['dir_pictures']))
 
 def stop_stream():
     print "Stopping Media Stream"
-    clear_frame_buffer()
+    stop_process('gallery')
 
 
 def get_file_list(ext_list, dir):
@@ -68,7 +62,7 @@ def clear_frame_buffer():
 
 def stop_process(process_grep):
     #http://stackoverflow.com/questions/4214773/kill-process-with-python
-    proc = subprocess.Popen(["pgrep", process_grep], stdout=subprocess.PIPE) 
+    proc = subprocess.Popen(["pgrep", "-f", process_grep], stdout=subprocess.PIPE) 
     for pid in proc.stdout:
         print "Stopping %s with PID: %s" % (process_grep, pid)
         try: 
@@ -79,15 +73,32 @@ def stop_process(process_grep):
             continue
 
 def pick_stream():
-    app_selected_name = random.choice(APPS.keys())
-    app_selected_command = APPS[app_selected_name]
+    app_selected_name = random.choice(settings['apps'].keys())
+    app_selected_command = settings['apps'][app_selected_name]['python_command']
     print "Playing %s with %s" % (app_selected_name, app_selected_command)
+    return settings['apps'][app_selected_name]
 
 def show_pictures():
-    stream_command_str = APPS['pictures'].replace('DIRECTORY', settings['dir_pictures'])
+    print " -- SHOWING PICTURES"
+    #print get_file_list(VIDEO_FORMAT,str(settings['dir_videos']))
+    stream_command_str = settings['apps']['pictures']['command'].replace('DIRECTORY', settings['dir_pictures'])
     print stream_command_str
-    proc = subprocess.Popen('top', shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
-    time.sleep(15)
+    proc = subprocess.Popen(stream_command_str, shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+    time.sleep(settings['pictures_time'])
+    stop_process(settings['apps']['pictures']['process'])
+
+def show_video():
+    print " -- SHOWING VIDEO"
+    video_list = get_file_list(VIDEO_FORMAT,str(settings['dir_videos']))
+
+    selected_video = random.choice(video_list).strip().replace(" ", "\ ")
+    selected_video = "%s%s" % (settings['dir_videos'], selected_video)
+    stream_command_str = settings['apps']['video']['command'].replace('VIDEO', selected_video)
+    print stream_command_str
+    proc = subprocess.Popen(stream_command_str, shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+    proc.wait()
+    time.sleep(2)
+
 
 #################
 command_string = str(sys.argv[1])

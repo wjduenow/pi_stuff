@@ -1,2 +1,16 @@
 dir_pictures: /Users/wesd/Downloads/img/*
+pictures_time: 2
 dir_videos: /Users/wesd/Downloads/
+
+apps:
+  video:
+    python_command: show_video
+    command: omxplayer --no-osd VIDEO"
+    process: omxplayer
+  pictures:
+    python_command: show_pictures
+    command: sudo fbi -noverbose -T 2 -a -m 1900x1200  -t 5 -u DIRECTORY > /dev/null 2>&1&
+    process: fbi
+
+
+
