@@ -10,21 +10,9 @@ from os.path import isfile, join
 import yaml
 import random
 
-
-######
-with open('./gallery.yml', 'r') as f:
-  settings = yaml.load(f)
-
-if len(sys.argv) < 2:
-    error_message = """
-Error: Incorrect number of arguments.
-Usage: python oxm.py <start|stop>
-Example: python oxm.py start
-"""
-    sys.exit(error_message)
-
 def start_stream():
     print "Starting Media Stream"
+    clean_up_stale()
     while True:
       clear_frame_buffer()
       run_app = pick_stream()
@@ -32,9 +20,9 @@ def start_stream():
       exec("%s()" % (run_app['python_command']))
       print "done"
 
-
 def stop_stream():
     print "Stopping Media Stream"
+    clean_up_stale()
     stop_process('gallery')
 
 
@@ -88,11 +76,27 @@ def show_video():
     proc.wait()
     time.sleep(2)
 
+def clean_up_stale():
+    for app in settings['apps'].keys():
+        stop_process(settings['apps'][app]['process'])
 
 #################
 #  Main
 #################
 if __name__ == "__main__":
+
+    with open('./gallery.yml', 'r') as f:
+        settings = yaml.load(f)
+
+    if len(sys.argv) < 2:
+        error_message = """
+        Error: Incorrect number of arguments.
+        Usage: python oxm.py <start|stop>
+        Example: python oxm.py start
+        """
+        sys.exit(error_message)
+
+
     command_string = str(sys.argv[1])
 
     if command_string == "start":
