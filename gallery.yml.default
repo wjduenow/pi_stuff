@@ -1,5 +1,5 @@
-dir_pictures: /Users/wesd/Downloads/img/*
-dir_videos: /Users/wesd/Downloads/
+dir_pictures: /home/pi/pic_test/pictures/*
+dir_videos: /home/pi/
 
 pictures_time: 2
 
