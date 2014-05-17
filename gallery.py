@@ -16,10 +16,12 @@ with open('./gallery.yml', 'r') as f:
   settings = yaml.load(f)
 
 if len(sys.argv) < 2:
-    sys.exit("""
-    Error: Incorrect number of arguments.
-    Usage: python oxm.py <start|stop>
-    Example: python oxm.py start""")
+    error_message = """
+Error: Incorrect number of arguments.
+Usage: python oxm.py <start|stop>
+Example: python oxm.py start
+"""
+    sys.exit(error_message)
 
 def start_stream():
     print "Starting Media Stream"
@@ -69,7 +71,7 @@ def show_pictures():
     #print get_file_list(VIDEO_FORMAT,str(settings['dir_videos']))
     stream_command_str = settings['apps']['pictures']['command'].replace('DIRECTORY', settings['dir_pictures'])
     print stream_command_str
-    proc = subprocess.Popen(stream_command_str, shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+    proc = subprocess.Popen(stream_command_str, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     time.sleep(settings['pictures_time'])
     stop_process(settings['apps']['pictures']['process'])
 
@@ -77,11 +79,12 @@ def show_video():
     print " -- SHOWING VIDEO"
     video_list = get_file_list(tuple(settings['apps']['video']['formats']),str(settings['dir_videos']))
 
-    selected_video = random.choice(video_list).strip().replace(" ", "\ ")
+    selected_video = random.choice(video_list).strip()#.replace(" ", "\ ")
     selected_video = "%s%s" % (settings['dir_videos'], selected_video)
     stream_command_str = settings['apps']['video']['command'].replace('VIDEO', selected_video)
+    stream_command_str = stream_command_str.replace('"', '')
     print stream_command_str
-    proc = subprocess.Popen(stream_command_str, shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+    proc = subprocess.Popen(stream_command_str, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     proc.wait()
     time.sleep(2)
 
