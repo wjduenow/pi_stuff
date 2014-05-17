@@ -67,7 +67,7 @@ def show_video():
     print " -- SHOWING VIDEO"
     video_list = get_file_list(tuple(settings['apps']['video']['formats']),str(settings['dir_videos']))
 
-    selected_video = random.choice(video_list).strip()#.replace(" ", "\ ")
+    selected_video = random.choice(video_list).strip().replace(" ", "\ ")
     selected_video = "%s%s" % (settings['dir_videos'], selected_video)
     stream_command_str = settings['apps']['video']['command'].replace('VIDEO', selected_video)
     stream_command_str = stream_command_str.replace('"', '')
